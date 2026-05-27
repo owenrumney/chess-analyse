@@ -77,11 +77,34 @@ Install the skill and schedule a report at 08:00 every morning:
 
 The LaunchAgent runs the daily report script for the previous UTC calendar day.
 
+To open the new Markdown report in `mdview` with Pi chat after creation:
+
+```bash
+./install.sh --username YOUR_CHESS_COM_USERNAME --with-launchagent --open-mdview
+```
+
+That sets the daily script to start `mdview`, detect the local live URL, then open that URL in the browser:
+
+```bash
+mdview <new_markdown_report> --chat --chat-agent pi -c
+open <mdview_live_url>
+```
+
+`mdview` must be installed and available on the LaunchAgent PATH. The installer includes common locations such as `/opt/homebrew/bin`, `/usr/local/bin`, `~/go/bin`, and `~/.local/bin`.
+
+You can choose a different mdview chat agent with:
+
+```bash
+./install.sh --username YOUR_CHESS_COM_USERNAME --with-launchagent --open-mdview --mdview-agent pi
+```
+
 Logs:
 
 ```text
 ~/.pi/agent/chess-coach/logs/launchd.out.log
 ~/.pi/agent/chess-coach/logs/launchd.err.log
+~/.pi/agent/chess-coach/logs/mdview.log
+~/.pi/agent/chess-coach/logs/mdview-YYYY-MM-DD.log
 ```
 
 Inspect the job:
@@ -109,8 +132,11 @@ Example:
 ```bash
 CHESS_COACH_USERNAME=owen1979
 CHESS_COACH_REPORT_DIR=/Users/you/.pi/agent/chess-coach/reports
+CHESS_COACH_LOG_DIR=/Users/you/.pi/agent/chess-coach/logs
 CHESS_COACH_DRILL_COUNT=5
 CHESS_COACH_DRILL_PLIES=8
+CHESS_COACH_OPEN_MDVIEW=0
+CHESS_COACH_MDVIEW_AGENT=pi
 ```
 
 ## Uninstall

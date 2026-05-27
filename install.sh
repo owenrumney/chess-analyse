@@ -4,6 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 USERNAME=""
 INSTALL_LAUNCHAGENT=0
+OPEN_MDVIEW=0
+MDVIEW_AGENT="pi"
 HOUR=8
 MINUTE=0
 SKILL_DEST="${HOME}/.pi/agent/skills/chess-coach"
@@ -18,6 +20,8 @@ Installs the Chess Coach Pi skill and optional macOS LaunchAgent.
 Options:
   --username NAME         Chess.com username to analyse (required)
   --with-launchagent      Install daily macOS LaunchAgent
+  --open-mdview           After daily report creation, run: mdview --chat --chat-agent pi -c <report>
+  --mdview-agent NAME     Agent passed to mdview --chat-agent (default: pi)
   --hour H                LaunchAgent hour, 0-23 (default: 8)
   --minute M              LaunchAgent minute, 0-59 (default: 0)
   --skill-dest DIR        Skill install dir (default: ~/.pi/agent/skills/chess-coach)
@@ -27,6 +31,7 @@ Options:
 Examples:
   ./install.sh --username owen1979
   ./install.sh --username owen1979 --with-launchagent --hour 8 --minute 0
+  ./install.sh --username owen1979 --with-launchagent --open-mdview
 EOF
 }
 
@@ -34,6 +39,8 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --username) USERNAME="$2"; shift 2 ;;
     --with-launchagent) INSTALL_LAUNCHAGENT=1; shift ;;
+    --open-mdview) OPEN_MDVIEW=1; shift ;;
+    --mdview-agent) MDVIEW_AGENT="$2"; shift 2 ;;
     --hour) HOUR="$2"; shift 2 ;;
     --minute) MINUTE="$2"; shift 2 ;;
     --skill-dest) SKILL_DEST="$2"; shift 2 ;;
@@ -63,8 +70,11 @@ cat > "${CONFIG_DIR}/config.env" <<EOF
 # Chess Coach config
 CHESS_COACH_USERNAME=${USERNAME}
 CHESS_COACH_REPORT_DIR=${CONFIG_DIR}/reports
+CHESS_COACH_LOG_DIR=${CONFIG_DIR}/logs
 CHESS_COACH_DRILL_COUNT=5
 CHESS_COACH_DRILL_PLIES=8
+CHESS_COACH_OPEN_MDVIEW=${OPEN_MDVIEW}
+CHESS_COACH_MDVIEW_AGENT=${MDVIEW_AGENT}
 EOF
 
 python3 -m py_compile "${SKILL_DEST}/scripts/chess_coach.py"
@@ -96,6 +106,7 @@ Installed Chess Coach.
 Skill:   ${SKILL_DEST}
 Config:  ${CONFIG_DIR}/config.env
 Reports: ${CONFIG_DIR}/reports
+Open mdview: ${OPEN_MDVIEW}
 
 Try it:
   python3 "${SKILL_DEST}/scripts/chess_coach.py" --username "${USERNAME}" --days 3

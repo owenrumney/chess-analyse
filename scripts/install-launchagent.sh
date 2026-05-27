@@ -72,7 +72,7 @@ cat > "${DEST}" <<PLIST
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
-    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <string>/opt/homebrew/bin:/usr/local/bin:${HOME}/go/bin:${HOME}/.local/bin:${HOME}/.cargo/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
     <key>CHESS_COACH_CONFIG_DIR</key>
     <string>${CONFIG_DIR}</string>
     <key>CHESS_COACH_REPORT_DIR</key>
